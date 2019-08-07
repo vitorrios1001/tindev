@@ -5,8 +5,21 @@ const Dev = require('../models/Dev')
 
 module.exports = {
 
-    index(req, res) {
-        return res.json({ ok: true })
+    async index(req, res) {
+
+        const { user } = req.headers;
+
+        const devLogged = await Dev.findById(user);
+
+        const devs = await Dev.find({
+            $and: [
+                { _id: { $ne: user } },
+                { _id: { $nin: devLogged.likes } },
+                { _id: { $nin: devLogged.dislikes } },
+            ]
+        })
+
+        return res.json(devs);
     },
 
     async store(req, res) {
@@ -14,6 +27,8 @@ module.exports = {
         const { userName } = req.body;
 
         const userExists = await Dev.findOne({ user: userName });
+
+        console.log(userName)
 
         if (userExists)
             return res.json(userExists);
@@ -24,7 +39,7 @@ module.exports = {
             const { name, bio, avatar_url: avatar } = data;
 
             const dev = await Dev.create({
-                name,
+                name: name || userName,
                 user: userName,
                 bio,
                 avatar,
@@ -32,6 +47,7 @@ module.exports = {
 
             return res.json(dev);
         } catch (error) {
+            console.log(error)
             return res.json({ erro: 'O usuario informado não foi encontrado' })
         }
     }

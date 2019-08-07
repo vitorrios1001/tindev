@@ -5,18 +5,26 @@ const DevSchema = new Schema({
         type: String,
         required: true,
     },
-    user:{
+    user: {
         type: String,
         required: true,
     },
-    bio:String,
+    bio: String,
     avatar: {
         type: String,
-        required: true,        
+        required: true,
     },
+    likes: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Dev',
+    }],
+    dislikes: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Dev',
+    }],
 },
-{
-    timestamps: true,
-});
+    {
+        timestamps: true,
+    });
 
 module.exports = model('Dev', DevSchema);

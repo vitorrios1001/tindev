@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const cors = require('cors');
 
 const connectioString = process.env.CONNECTIO_STRING || 'mongodb://localhost:27017/tindev';
 
@@ -12,6 +13,7 @@ mongoose.connect(connectioString, {
 
 const routes = require('./routes')
 
+server.use(cors());
 server.use(express.json());
 server.use(routes);
 
